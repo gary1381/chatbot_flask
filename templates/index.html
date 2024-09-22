@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        #chat-history {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .message-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .message-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 30px;
+            text-align: center;
+            padding-top: 5px; /* Add padding to lower the icon */
+        }
+        .user-icon {
+            color: #3498db;
+        }
+        .bot-icon {
+            color: #2ecc71;
+        }
+        .message-content {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #3498db;
+            color: white;
+        }
+        .bot-message {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+        }
+        #chat-form {
+            display: flex;
+            flex-direction: column;
+        }
+        #text_input {
+            flex-grow: 1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .file-input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            justify-content: space-between;
+        }
+        .file-input-container label {
+            margin-right: 10px;
+            min-width: 80px;
+        }
+        .file-input-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+        .file-input-wrapper input[type="file"] {
+            flex-grow: 1;
+        }
+        .remove-button {
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+        .remove-button:hover {
+            background-color: #c0392b;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+        .bot-message pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 10px 0;
+            position: relative;
+        }
+        .bot-message code {
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+        .copy-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            background-color: #ddd;
+            color: #333;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+        .copy-button:hover {
+            background-color: #ccc;
+        }
+        pre {
+            padding-top: 30px;
+        }
+        .hljs-keyword {
+            color: #d73a49;
+        }
+        .hljs-string {
+            color: #032f62;
+        }
+        .hljs-number {
+            color: #005cc5;
+        }
+        .hljs-function {
+            color: #6f42c1;
+        }
+        .hljs-comment {
+            color: #6a737d;
+            font-style: italic;
+        }
+        .hljs-variable {
+            color: #e36209;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Chatbot</h1>
+    <div id="chat-history"></div>
+    <form id="chat-form" action="/chat" method="post" enctype="multipart/form-data">
+        <input type="text" id="text_input" name="text_input" placeholder="Type your message here..." required>
+        <div class="file-input-container">
+            <label for="image_input">Image:</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="image_input" name="image_input" accept="image/*">
+                <button type="button" id="remove_image_button" class="remove-button">Remove</button>
+            </div>
+        </div>
+        <div class="file-input-container">
+            <label for="pdf_input">PDF File:</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="pdf_input" name="pdf_input" accept="application/pdf">
+                <button type="button" id="remove_pdf_button" class="remove-button">Remove</button>
+            </div>
+        </div>
+        <input type="submit" value="Send">
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                },
+                langPrefix: 'hljs language-',
+                breaks: true,  // Enable GitHub Flavored Markdown line breaks
+                gfm: true      // Enable GitHub Flavored Markdown
+            });
+
+            function addCopyButtons(element) {
+                element.find('pre code').each(function(i) {
+                    var $this = $(this);
+                    var $pre = $this.parent();
+                    var code = $this.text();
+                    var buttonId = 'copy-button-' + i;
+                    var $button = $('<button>', {
+                        id: buttonId,
+                        class: 'copy-button',
+                        text: 'Copy',
+                        click: function() {
+                            navigator.clipboard.writeText(code).then(function() {
+                                $button.text('Copied!');
+                                setTimeout(function() {
+                                    $button.text('Copy');
+                                }, 2000);
+                            }, function(err) {
+                                console.error('Could not copy text: ', err);
+                            });
+                        }
+                    });
+                    $pre.css('position', 'relative').append($button);
+                });
+            }
+
+            function addMessageToHistory(message, isUser) {
+                const messageClass = isUser ? 'user-message' : 'bot-message';
+                const iconClass = isUser ? 'fas fa-user user-icon' : 'fas fa-robot bot-icon';
+                const messageContent = isUser ? message : marked.parse(message);
+                const $messageElement = $(`
+                    <div class="message-container">
+                        <div class="message-icon"><i class="${iconClass}"></i></div>
+                        <div class="message-content ${messageClass}">${messageContent}</div>
+                    </div>
+                `);
+                $('#chat-history').append($messageElement);
+                if (!isUser) {
+                    addCopyButtons($messageElement.find('.message-content'));
+                }
+                $('#chat-history').scrollTop($('#chat-history')[0].scrollHeight);
+            }
+
+            $('#remove_image_button').on('click', function() {
+                $('#image_input').val('');
+            });
+
+            $('#remove_pdf_button').on('click', function() {
+                $('#pdf_input').val('');
+            });
+
+            $('#chat-form').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                const userInput = $('#text_input').val();
+                addMessageToHistory(userInput, true);
+                $('#text_input').val('');
+                $('#image_input').val('');
+                $('#pdf_input').val('');
+
+                let botResponse = '';
+                let botMessageElement = null;
+                fetch('/chat', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+
+                    function read() {
+                        reader.read().then(({ done, value }) => {
+                            if (done) {
+                                return;
+                            }
+                            const chunk = decoder.decode(value, { stream: true });
+                            botResponse += chunk;
+                            if (!botMessageElement) {
+                                botMessageElement = $(`
+                                    <div class="message-container">
+                                        <div class="message-icon"><i class="fas fa-robot bot-icon"></i></div>
+                                        <div class="message-content bot-message"></div>
+                                    </div>
+                                `);
+                                $('#chat-history').append(botMessageElement);
+                            }
+                            botMessageElement.find('.message-content').html(marked.parse(botResponse));
+                            addCopyButtons(botMessageElement.find('.message-content'));
+                            $('#chat-history').scrollTop($('#chat-history')[0].scrollHeight);
+                            read();
+                        }).catch(error => {
+                            console.error("Error reading stream:", error);
+                            addMessageToHistory("Error: " + error.message, false);
+                        });
+                    }
+                    read();
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    addMessageToHistory("Error occurred while processing your request.", false);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

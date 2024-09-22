@@ -1,0 +1,11 @@
+# files
+*.pyc
+*.jp*g
+.env
+readme.txt
+
+# building dir
+uploads/
+test/
+.vscode/
+
