@@ -12,6 +12,10 @@ This chatbot was built with Flask and LangChain. The users can interact with lar
 - Secure login system to protect the chatbot
 - Integration with OpenAI's GPT models via LangChain
 - Streaming responses for a more dynamic user experience
+- Structured markdown output for organized and formatted responses
+- Support for generating tables, lists, and code blocks in AI responses
+- Enhanced readability with automatic formatting of complex information
+
 
 
 ## Technologies Used
