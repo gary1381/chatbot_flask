@@ -22,6 +22,24 @@ This chatbot was built with Flask and LangChain. The users can interact with lar
 - PyMuPDF: For parsing and extracting content from PDF files
 - Werkzeug: For secure file uploads and password hashing
 
+
+## Web UI Examples
+
+Here are some screenshots of the chatbot's web interface:
+
+
+### Chat Interface
+![Chat Interface](screenshots/chat_interface.png)
+
+### Upload image as context
+![File Upload](screenshots/Image_as_context.png)
+
+### Upload PDF file as context
+![File Upload](screenshots/PDF_file_as_context.png)
+
+These screenshots provide a visual guide to the user interface and key features of the chatbot.
+
+
 ## Setup and Installation
 
 1. Clone the repository
@@ -45,21 +63,6 @@ This chatbot was built with Flask and LangChain. The users can interact with lar
 3. Start chatting with the AI assistant
 4. Upload images or PDF files for additional context in your conversations
 
-## Web UI Examples
-
-Here are some screenshots of the chatbot's web interface:
-
-
-### Chat Interface
-![Chat Interface](screenshots/chat_interface.png)
-
-### Upload image as context
-![File Upload](screenshots/image_as_context.png)
-
-### Upload PDF file as context
-![File Upload](screenshots/PDF_file_as_context.png)
-
-These screenshots provide a visual guide to the user interface and key features of the chatbot.
 
 ## Security Note
 
