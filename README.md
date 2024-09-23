@@ -63,7 +63,7 @@ These screenshots provide a visual guide to the user interface and key features 
 ## Usage
 
 1. Access the application through your web browser
-2. Log in using the predefined password
+2. Log in using the predefined password (Gary2024)
 3. Start chatting with the AI assistant
 4. Upload images or PDF files for additional context in your conversations
 
